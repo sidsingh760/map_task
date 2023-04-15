@@ -7,7 +7,7 @@ export const initialRegion = {
   longitudeDelta: 0.035,
 };
 
-export const _isInPolygon = (point, polygonArray) => {
+export const isInPolygon = (point, polygonArray) => {
   let x = point.latitude;
   let y = point.longitude;
 
@@ -36,4 +36,40 @@ export const toastMessage = (toastMessage, type = 'info') => {
     text1: toastMessage,
     visibilityTime: 1500,
   });
+};
+
+export const calculateArea = polygon => {
+  let sum = 0;
+  for (let i = 0; i < polygon.length; i++) {
+    const j = (i + 1) % polygon.length;
+    sum +=
+      polygon[i].latitude * polygon[j].longitude -
+      polygon[j].latitude * polygon[i].longitude;
+  }
+  const area =
+    Math.abs(sum / 2) *
+    111319.9 *
+    111319.9 *
+    Math.cos(polygon[0].latitude * (Math.PI / 180));
+  return area.toFixed(2);
+};
+
+export const polygonCenterPoint = coordinates => {
+  let latitudeSum = 0;
+  let longitudeSum = 0;
+  coordinates.forEach(point => {
+    latitudeSum += point.latitude;
+    longitudeSum += point.longitude;
+  });
+  const latitudeAvg = latitudeSum / coordinates.length;
+  const longitudeAvg = longitudeSum / coordinates.length;
+  return {latitude: latitudeAvg, longitude: longitudeAvg};
+};
+
+let baseName = 'polygon';
+let count = 1;
+export const generateUniqueName = () => {
+  let name = `${baseName}_${count}`;
+  count++;
+  return name;
 };
